@@ -182,10 +182,10 @@ function updateStats() {
     totMatches.textContent = `Total Matches: ${totTried}/${maxTrials}`;
     totPosMatches.textContent = `Position Matches: ${posMatches}/${totTried}`;
     totAudMathces.textContent = `Audio Matches: ${audMatches}/${totTried}`;
-    totalStats.textContent = `Total Correct: ${totCorrect}/${totClicked}`;
-    posStats.textContent = `Position: ${posCorrects}/${totClickedPos}`;
-    audStats.textContent = `Audio: ${audCorrects}/${totClickedAud}`;
-    accuracyStats.textContent = `Overall Accuracy: ${totClicked > 0 ? ((totCorrect / totClicked) * 100).toFixed(2) : 0}%`;
+    totalStats.textContent = `Total Correct: ${totCorrect}/${totTried}`;
+    posStats.textContent = `Position: ${posCorrects}/${posMatches}`;
+    audStats.textContent = `Audio: ${audCorrects}/${audMatches}`;
+    accuracyStats.textContent = `Overall Accuracy: ${totTried > 0 ? ((totCorrect / totTried) * 100).toFixed(2) : 0}%`;
 }
 
 function randExcluding(n, exclude) {
@@ -329,7 +329,7 @@ btnPos.addEventListener('click', () => {
         } else { btnPos.classList.add('incorrect'); posIncorrects++; }
         totClickedPos++;
     }
-    clickPos = true;
+    if (!paused && playing) clickPos = true;
     posMissed = false;
 });
 
@@ -341,7 +341,7 @@ btnAud.addEventListener('click', () => {
         } else { btnAud.classList.add('incorrect'); audIncorrects++; }
         totClickedAud++;
     }
-    clickAud = true;
+    if (!paused && playing) clickAud = true;
     audMissed = false;
 });
 
