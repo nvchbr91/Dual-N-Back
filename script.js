@@ -5,7 +5,7 @@ const titleBtn = document.getElementById('titleBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const closeSettings = document.getElementById('closeSettings');
 const closeStats = document.getElementById('closeStats');
-const expVal = document.getElementById('expVal');
+const prob = document.getElementById('prob');
 
 const settingPos = document.getElementById('settingPos');
 const settingAud = document.getElementById('settingAud');
@@ -215,7 +215,7 @@ function randomFlash() {
     if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
     if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
 
-    let p_input = Math.max(0, Math.min(100, parseInt(expVal.value, 10)));
+    let p_input = Math.max(0, Math.min(100, parseInt(prob.value, 10)));
     let p = p_input / 100;
     let perPos = 0;
     let perAud = 0;
