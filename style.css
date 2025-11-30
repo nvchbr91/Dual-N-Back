@@ -142,7 +142,7 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 400px;
+    width: 350px;
 }
 
 #settingsPanel input[type=checkbox] {
@@ -158,7 +158,7 @@ input[type=number]::-webkit-outer-spin-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 400px;
+    width: 350px;
     margin-bottom: 15px;
     font-size: 20px;
 }

@@ -138,7 +138,7 @@ function updateTitle() {
     }
     let mode = (settingPos.checked && settingAud.checked) ? 'Dual' : 'Single';
     titleBtn.textContent = `${mode} ${settingN.value}-Back`;
-    maxTrials = parseInt(trialInput.value, 10) || 0;
+    maxTrials = trialInput.value;
     trialProgress.textContent = `0/${maxTrials}`;
 }
 
@@ -193,13 +193,14 @@ function updateStats() {
     let totTried = posMatches + audMatches;
     let totClicked = totClickedPos + totClickedAud;
     let totCorrect = posCorrects + audCorrects;
+    samples = totClicked <= totTried ? totTried : totClicked;
     totMatches.textContent = `Total Matches: ${totTried}/${maxTrials}`;
     totPosMatches.textContent = `Position Matches: ${posMatches}/${totTried}`;
     totAudMathces.textContent = `Audio Matches: ${audMatches}/${totTried}`;
     totalStats.textContent = `Total Correct: ${totCorrect}/${totTried}`;
     posStats.textContent = `Position: ${posCorrects}/${posMatches}`;
     audStats.textContent = `Audio: ${audCorrects}/${audMatches}`;
-    accuracyStats.textContent = `Overall Accuracy: ${totTried > 0 ? ((totCorrect / totTried) * 100).toFixed(2) : 0}%`;
+    accuracyStats.textContent = `Overall Accuracy: ${samples > 0 ? Math.round((totCorrect / samples) * 100) : 0}%`;
 }
 
 function randExcluding(n, exclude) {
@@ -213,21 +214,19 @@ function randomFlash() {
     trialIndex++;
     trialProgress.textContent = `${trialIndex}/${maxTrials}`;
 
+    if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
+    if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
+
     if (trialIndex == maxTrials) {
         clearInterval(intervalID);
         intervalID = null;
         playing = false;
         paused = true;
         startBtn.textContent = 'Start';
-        if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
-        if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
         updateStats();
         fullReset();
         return;
     }
-
-    if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
-    if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
 
     let p_input = Math.max(0, Math.min(100, parseInt(prob.value, 10)));
     let p = p_input / 100;
@@ -306,9 +305,9 @@ function randomFlash() {
 startBtn.addEventListener('click', () => {
     if ((settingPos.checked === false && settingAud.checked === false)
         || (settingN.value <= 0 || Math.floor(settingN.value) != settingN.value)
-        || (maxTrials <= 0)
+        || (trialInput.value <= 0 || Math.floor(trialInput.value) != trialInput.value)
         || (waitTime.value <= 0 || Math.floor(waitTime.value) != waitTime.value)
-        || (showTime.value <= 0 || Math.floor(showTime.value) != showTime.value)
+        || (showTime.value <= 0 || Number(showTime.value) >= Number(waitTime.value) || Math.floor(showTime.value) != showTime.value)
         || (prob.value < 0 || prob.value > 100 || Math.floor(prob.value) != prob.value)) {
         alert('Please select a valid mode and ensure all settings are correctly filled out.');
         return;
