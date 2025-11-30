@@ -73,22 +73,45 @@ function loadVoices() {
         voices.find(v => v.name.includes("Google US English")) ||
         voices.find(v => v.lang === "en-US") ||
         voices[0];
+
     return true;
 }
 
-if (!loadVoices()) {
-    speechSynthesis.onvoiceschanged = loadVoices;
+function waitForVoices(timeout = 3000) {
+    return new Promise(resolve => {
+        if (loadVoices()) return resolve();
+
+        const timer = setTimeout(resolve, timeout);
+
+        speechSynthesis.onvoiceschanged = () => {
+            clearTimeout(timer);
+            loadVoices();
+            resolve();
+        };
+    });
 }
 
 function warmUpTTS() {
     return new Promise(resolve => {
-        const u = new SpeechSynthesisUtterance(" ");
+        speechSynthesis.cancel();
+
+        const u = new SpeechSynthesisUtterance("test");
         u.volume = 0;
         u.rate = 1.0;
+
         u.onend = () => {
             ttsReady = true;
             resolve();
         };
+
+        u.onerror = () => {
+            ttsReady = true;
+            resolve();
+        };
+
+        if (selectedVoice) u.voice = selectedVoice;
+        
+        speechSynthesis.cancel();
         speechSynthesis.speak(u);
     });
 }
@@ -98,24 +121,15 @@ function speakLetter(letter) {
     utter.lang = 'en-US';
     utter.rate = 1.1;
     if (selectedVoice) utter.voice = selectedVoice;
-    speechSynthesis.speak(utter);
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);;
 }
 
 window.addEventListener("load", async () => {
-    if (!loadVoices()) {
-        await new Promise(r => {
-            speechSynthesis.onvoiceschanged = () => {
-                loadVoices();
-                r();
-            };
-        });
-    }
-
+    await waitForVoices();
     await warmUpTTS();
-
     console.log("TTS READY");
 });
-
 
 function updateTitle() {
     if (settingPos.checked === false && settingAud.checked === false) {
@@ -247,6 +261,7 @@ function randomFlash() {
         } else {
             if (trialIndex > settingN.value && targetAud != null) idxAud = randExcluding(9, letters.indexOf(targetAud)); else idxAud = Math.floor(Math.random() * 9);
         }
+        speechSynthesis.cancel();
         speakLetter(letters[idxAud]);
     }
 
@@ -281,10 +296,20 @@ function randomFlash() {
 
     clickPos = false;
     clickAud = false;
+
+    console.log(`Trial ${trialIndex}: Position ${idxPos} (Target: ${currentTargetPos}), Audio ${letters[idxAud]} (Target: ${currentTargetAud})`);
+    console.log(`History Position: ${posHistory}, History Audio: ${audHistory}`);
+    console.log(`Matches so far - Position: ${posMatches}, Audio: ${audMatches}`);
+    console.log(`Correct so far - Position: ${posCorrects}, Audio: ${audCorrects}`);
 }
 
 startBtn.addEventListener('click', () => {
-    if (settingPos.checked === false && settingAud.checked === false) {
+    if ((settingPos.checked === false && settingAud.checked === false)
+        || (settingN.value <= 0 || Math.floor(settingN.value) != settingN.value)
+        || (maxTrials <= 0)
+        || (waitTime.value <= 0 || Math.floor(waitTime.value) != waitTime.value)
+        || (showTime.value <= 0 || Math.floor(showTime.value) != showTime.value)
+        || (prob.value < 0 || prob.value > 100 || Math.floor(prob.value) != prob.value)) {
         alert('Please select at least one mode: Position or Audio.');
         return;
     }

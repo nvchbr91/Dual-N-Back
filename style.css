@@ -37,6 +37,10 @@ body {
     cursor: pointer;
 }
 
+#settingsPanel .settings-group label {
+    margin: 20px 0 20px 0;
+}
+
 #grid {
     display: grid;
     grid-template-columns: repeat(3, 125px);
