@@ -24,7 +24,7 @@ const totAudMathces = document.getElementById('totAudMathces');
 const accuracyStats = document.getElementById('accuracy');
 const btnPos = document.getElementById('btnPos');
 const btnAud = document.getElementById('btnAud');
-const letters = ['A','B','C','D','E','F','G','H','I'];
+const letters = ['G', 'H', 'I', 'J', 'K', 'L', 'O', 'S', 'T'];
 
 let cells = [];
 let intervalID = null;
@@ -217,7 +217,7 @@ function randomFlash() {
     if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
     if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
 
-    if (trialIndex == maxTrials) {
+    if (trialIndex > maxTrials) {
         clearInterval(intervalID);
         intervalID = null;
         playing = false;
