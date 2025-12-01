@@ -232,6 +232,17 @@ function randomFlash() {
     if (posMissed) { btnPos.classList.add('missed'); posMissed = false; }
     if (audMissed) { btnAud.classList.add('missed'); audMissed = false; }
 
+    if (trialIndex > maxTrials) {
+        clearInterval(intervalID);
+        intervalID = null;
+        playing = false;
+        paused = true;
+        startBtn.textContent = 'Start';
+        updateStats();
+        fullReset();
+        return;
+    }
+
     let p_input = Math.max(0, Math.min(100, parseInt(prob.value, 10)));
     let p = p_input / 100;
     let perPos = 0;
@@ -300,16 +311,6 @@ function randomFlash() {
 
     clickPos = false;
     clickAud = false;
-
-    if (trialIndex == maxTrials) {
-        clearInterval(intervalID);
-        intervalID = null;
-        playing = false;
-        paused = true;
-        startBtn.textContent = 'Start';
-        updateStats();
-        fullReset();
-    }
 
     console.log(`Trial ${trialIndex}: Position ${idxPos} (Target: ${currentTargetPos}), Audio ${letters[idxAud]} (Target: ${currentTargetAud})`);
     console.log(`History Position: ${posHistory}, History Audio: ${audHistory}`);
